@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reuniones · Equipo Creativo 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --pill-dev: #f5a623;
+    --pill-info: #4a90e2;
+    --pill-junta: #e8420a;
+    --text-dark: #0a0a0a;
+    --text-light: #ffffff;
+    --font: 'Outfit', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+    position: relative;
+  }
+
+  /* ── ANIMATED GRADIENT BACKGROUND ── */
+  .bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+    animation: blobDrift linear infinite;
+    will-change: transform;
+  }
+
+  .blob-1 {
+    width: 600px; height: 600px;
+    background: #f5a623;
+    top: -200px; left: -150px;
+    animation-duration: 28s;
+    animation-name: drift1;
+  }
+  .blob-2 {
+    width: 500px; height: 500px;
+    background: #4a90e2;
+    top: 30%; right: -200px;
+    animation-duration: 34s;
+    animation-name: drift2;
+  }
+  .blob-3 {
+    width: 450px; height: 450px;
+    background: #e8420a;
+    bottom: 10%; left: 20%;
+    animation-duration: 40s;
+    animation-name: drift3;
+  }
+
+  @keyframes drift1 {
+    0%   { transform: translate(0,0) scale(1); }
+    33%  { transform: translate(80px, 120px) scale(1.08); }
+    66%  { transform: translate(-40px, 60px) scale(0.95); }
+    100% { transform: translate(0,0) scale(1); }
+  }
+  @keyframes drift2 {
+    0%   { transform: translate(0,0) scale(1); }
+    40%  { transform: translate(-100px, 80px) scale(1.1); }
+    70%  { transform: translate(50px, -60px) scale(0.92); }
+    100% { transform: translate(0,0) scale(1); }
+  }
+  @keyframes drift3 {
+    0%   { transform: translate(0,0) scale(1); }
+    30%  { transform: translate(60px,-80px) scale(1.05); }
+    65%  { transform: translate(-80px,40px) scale(0.97); }
+    100% { transform: translate(0,0) scale(1); }
+  }
+
+  /* all content above bg */
+  .header, .legend-row, main, footer { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 3.5rem 2rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .eyebrow-pill {
+    background: transparent;
+    border: 2px solid #333;
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  .header-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .htag {
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    font-weight: 800;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  .htag.orange  { background: var(--pill-dev);  color: var(--text-dark); }
+  .htag.blue    { background: var(--pill-info);  color: var(--text-light); }
+  .htag.red     { background: var(--pill-junta); color: var(--text-light); }
+  .htag.outline { background: transparent; border: 2.5px solid #fff; color: #fff; }
+  .htag.white   { background: #fff; color: var(--text-dark); }
+
+  .header-meet {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .meet-pill {
+    background: transparent;
+    border: 2px solid #2ecc71;
+    color: #2ecc71;
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .meet-desc {
+    font-size: 0.72rem;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  /* ── LEGEND ── */
+  .legend-row {
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    padding: 0 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .leg-pill {
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+  }
+
+  /* ── MONTH BLOCK — GLASS ── */
+  .month-block {
+    margin-bottom: 1.5rem;
+    border-radius: 20px;
+    padding: 0 0 1rem;
+    overflow: hidden;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow:
+      0 4px 32px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.07);
+    transition:
+      background 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease,
+      transform 0.4s ease;
+    position: relative;
+    cursor: default;
+    will-change: transform;
+  }
+
+  /* shimmer overlay that follows mouse */
+  .month-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: radial-gradient(
+      600px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255,255,255,0.055),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .month-block:hover::before { opacity: 1; }
+
+  .month-block:hover {
+    background: rgba(255,255,255,0.075);
+    border-color: rgba(255,255,255,0.18);
+    box-shadow:
+      0 10px 50px rgba(0,0,0,0.5),
+      0 0 0 1px rgba(255,255,255,0.06),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+  }
+
+  /* scroll reveal */
+  .month-block.in-view {
+    animation: blockReveal 0.6s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes blockReveal {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  /* caja activa en centro de pantalla al hacer scroll */
+  .month-block.scroll-active {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.22);
+    box-shadow:
+      0 12px 60px rgba(0,0,0,0.5),
+      0 0 40px rgba(245,166,35,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  /* ── MONTH HEADER INSIDE GLASS BOX ── */
+  .month-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 1rem;
+  }
+
+  .month-name {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .month-year-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+  }
+
+  /* events inside box have padding */
+  .month-events { padding: 0 1rem; }
+
+  /* ── EVENT ROW ── */
+  .event-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── DATE BUBBLE ── */
+  .date-bubble {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .date-bubble .dn { font-size: 1.25rem; }
+  .date-bubble .dd { font-size: 0.5rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+
+  .bubble-dev   { background: var(--pill-dev);   color: var(--text-dark); }
+  .bubble-info  { background: var(--pill-info);   color: var(--text-light); }
+  .bubble-junta { background: var(--pill-junta);  color: var(--text-light); }
+
+  /* ── PILL STACK ── */
+  .pill-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    flex: 1;
+    padding-top: 0.5rem;
+  }
+
+  .p-type {
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-size: clamp(0.75rem, 2.2vw, 0.9rem);
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .p-type.dev   { background: var(--pill-dev);   color: var(--text-dark); }
+  .p-type.info  { background: var(--pill-info);   color: var(--text-light); }
+  .p-type.junta { background: var(--pill-junta);  color: var(--text-light); }
+
+  .p-name {
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    font-size: clamp(0.75rem, 2.2vw, 0.9rem);
+    font-weight: 700;
+    background: #fff;
+    color: #0a0a0a;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .p-outline {
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: clamp(0.68rem, 1.8vw, 0.78rem);
+    font-weight: 600;
+    background: transparent;
+    border: 2px solid #2a2a2a;
+    color: #555;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .p-time {
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: transparent;
+    border: 2px solid #222;
+    color: #444;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .p-detalle {
+    border-radius: 999px;
+    padding: 0.38rem 0.9rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid #222;
+    color: #555;
+    line-height: 1;
+  }
+
+  /* ── CALENDAR TOGGLE ── */
+  .cal-toggle {
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid #2a2a2a;
+    color: #555;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: border-color 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    line-height: 1;
+  }
+
+  .cal-toggle:hover { border-color: var(--pill-dev); color: var(--pill-dev); }
+
+  .cal-options {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    width: 100%;
+  }
+
+  .cal-options.open { display: flex; }
+
+  .cal-opt-link {
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    line-height: 1;
+    transition: opacity 0.15s;
+  }
+
+  .cal-opt-link:hover { opacity: 0.8; }
+  .cal-opt-link.gcal  { background: #4285f4; color: #fff; }
+  .cal-opt-link.ical  { background: #444; color: #fff; }
+
+  /* ── FOOTER ── */
+  footer {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-top: 1px solid #111;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 500px) {
+    .header { padding: 2.5rem 1.25rem 1.5rem; }
+    main { padding: 0 1.25rem 4rem; }
+    .legend-row { padding: 0 1.25rem; }
+    footer { padding: 1.5rem 1.25rem 3rem; }
+    .date-bubble { width: 44px; height: 44px; }
+    .date-bubble .dn { font-size: 1.05rem; }
+    .month-name { font-size: 1.4rem; }
+    .month-events { padding: 0 0.5rem; }
+    .month-header { padding: 1rem 1rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- GRADIENT BACKGROUND -->
+<div class="bg-canvas">
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+</div>
+
+<div class="header">
+  <div class="header-eyebrow">
+    <span class="eyebrow-pill">The Life Church Chile</span>
+    <span class="eyebrow-pill">Equipo Creativo</span>
+  </div>
+  <div class="header-tags">
+    <span class="htag orange">reuniones</span>
+    <span class="htag blue">2026</span>
+    <span class="htag outline">miércoles</span>
+    <span class="htag red">juntas</span>
+    <span class="htag white">calendario</span>
+  </div>
+  <div class="header-meet">
+    <span class="meet-pill">● Google Meet</span>
+    <span class="meet-desc">9:30 – 10:30 · Enlace vía creativos@thelifechurch.cl</span>
+  </div>
+</div>
+
+<div class="legend-row">
+  <span class="leg-pill" style="background:var(--pill-dev);color:#0a0a0a">Devocional & Oración</span>
+  <span class="leg-pill" style="background:var(--pill-info);color:#fff">Informaciones</span>
+  <span class="leg-pill" style="background:var(--pill-junta);color:#fff">Junta de Equipo</span>
+</div>
+
+<main id="calendar"></main>
+
+<footer id="footer-pills"></footer>
+
+<script>
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const volunteers = shuffle(['Kathy','Jasmine','Sorimar','Renata','Carol','Ronald']);
+const devOrder = [...volunteers, 'Daniel', 'David'];
+
+const wedEvents = [];
+let d = new Date(2026, 5, 10);
+let toggle = 'dev';
+let devIdx = 0;
+const endDate = new Date(2026, 10, 30);
+
+while (d <= endDate) {
+  wedEvents.push({ date: new Date(d), tipo: toggle, devIdx: toggle === 'dev' ? devIdx++ : null });
+  toggle = toggle === 'dev' ? 'info' : 'dev';
+  d.setDate(d.getDate() + 14);
+}
+
+const juntas = [
+  { date: new Date(2026, 6, 4),  lugar: 'Oficina de la iglesia', tema: 'Workshop + Desayuno', detalle: 'Fotografía · Diseño · Animación · Video · IA' },
+  { date: new Date(2026, 7, 1),  lugar: 'Por definir', tema: 'Junta de Equipo', detalle: 'Lugar y temática por confirmar' },
+  { date: new Date(2026, 8, 5),  lugar: 'Por definir', tema: 'Junta de Equipo', detalle: 'Lugar y temática por confirmar' },
+  { date: new Date(2026, 9, 3),  lugar: 'Por definir', tema: 'Junta de Equipo', detalle: 'Lugar y temática por confirmar' },
+  { date: new Date(2026, 10, 7), lugar: 'Por definir', tema: 'Junta de Equipo', detalle: 'Lugar y temática por confirmar' },
+];
+
+const DAYS   = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtDT(date,h,m){ return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(h)}${pad(m)}00`; }
+
+function gcLink(title,date,desc,loc,sh=9,sm=30,eh=10,em=30){
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${fmtDT(date,sh,sm)}/${fmtDT(date,eh,em)}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
+}
+
+function icsBlob(title,date,desc,loc,sh=9,sm=30,eh=10,em=30){
+  const ics=[
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TLC Creative//ES',
+    'BEGIN:VEVENT',
+    `DTSTART:${fmtDT(date,sh,sm)}`,`DTEND:${fmtDT(date,eh,em)}`,
+    `SUMMARY:${title}`,`DESCRIPTION:${desc.replace(/\n/g,'\\n')}`,
+    `LOCATION:${loc}`,'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  return URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+}
+
+function toggleCal(id){ document.getElementById(id).classList.toggle('open'); }
+
+const byMonth = {};
+wedEvents.forEach(ev => {
+  const mk = ev.date.getMonth();
+  if (!byMonth[mk]) byMonth[mk] = [];
+  byMonth[mk].push({...ev, kind:'wed'});
+});
+juntas.forEach(j => {
+  const mk = j.date.getMonth();
+  if (!byMonth[mk]) byMonth[mk] = [];
+  byMonth[mk].push({...j, tipo:'junta', kind:'junta'});
+});
+
+const months = Object.keys(byMonth).map(Number).sort((a,b)=>a-b);
+const cal = document.getElementById('calendar');
+let animDelay = 0;
+
+months.forEach(m => {
+  const events = byMonth[m].sort((a,b)=>a.date-b.date);
+
+  const block = document.createElement('div');
+  block.className = 'month-block';
+
+  // Month header
+  const mhead = document.createElement('div');
+  mhead.className = 'month-header';
+  mhead.innerHTML = `
+    <span class="month-name">${MONTHS[m]}</span>
+    <span class="month-year-tag">2026</span>
+  `;
+  block.appendChild(mhead);
+
+  const eventsWrap = document.createElement('div');
+  eventsWrap.className = 'month-events';
+
+  events.forEach(ev => {
+    const row = document.createElement('div');
+    row.className = 'event-row';
+    row.style.animationDelay = (animDelay * 40) + 'ms';
+    animDelay++;
+
+    const dnum = ev.date.getDate();
+    const dname = DAYS[ev.date.getDay()];
+
+    const bubble = document.createElement('div');
+    bubble.className = 'date-bubble ' + (ev.tipo==='dev'?'bubble-dev':ev.tipo==='info'?'bubble-info':'bubble-junta');
+    bubble.innerHTML = `<span class="dn">${dnum}</span><span class="dd">${dname}</span>`;
+    row.appendChild(bubble);
+
+    const stack = document.createElement('div');
+    stack.className = 'pill-stack';
+    const uid = 'c' + ev.date.getTime();
+
+    if (ev.kind === 'wed') {
+      if (ev.tipo === 'dev') {
+        const who = devOrder[ev.devIdx % devOrder.length];
+        const title = `Devocional Equipo Creativo – ${who}`;
+        const desc = `Devocional & Oración\nResponsable: ${who}\nCompartir enlace desde creativos@thelifechurch.cl`;
+        const gcl = gcLink(title, ev.date, desc, 'Google Meet');
+        stack.innerHTML = `
+          <span class="p-type dev">devocional & oración</span>
+          <span class="p-name">${who}</span>
+          <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
+          <span class="p-time">9:30 – 10:30</span>
+          <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
+          <div class="cal-options" id="${uid}">
+            <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
+            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},'Google Meet');this.download='devocional.ics'">Apple / Outlook</a>
+          </div>`;
+      } else {
+        const title = 'Informaciones Equipo Creativo';
+        const desc = 'Reunión de Informaciones\nResponsables: Daniel & David\nCompartir enlace desde creativos@thelifechurch.cl';
+        const gcl = gcLink(title, ev.date, desc, 'Google Meet');
+        stack.innerHTML = `
+          <span class="p-type info">informaciones</span>
+          <span class="p-name">Daniel & David</span>
+          <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
+          <span class="p-time">9:30 – 10:30</span>
+          <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
+          <div class="cal-options" id="${uid}">
+            <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
+            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},'Google Meet');this.download='informaciones.ics'">Apple / Outlook</a>
+          </div>`;
+      }
+    } else {
+      const title = `Junta de Equipo – ${ev.tema}`;
+      const desc = `${ev.tema}\n${ev.detalle}\nLugar: ${ev.lugar}`;
+      const gcl = gcLink(title, ev.date, desc, ev.lugar, 9, 0, 12, 0);
+      stack.innerHTML = `
+        <span class="p-type junta">junta de equipo</span>
+        <span class="p-name">${ev.tema}</span>
+        <span class="p-detalle">${ev.detalle}</span>
+        <span class="p-outline">${ev.lugar}</span>
+        <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
+        <div class="cal-options" id="${uid}">
+          <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
+          <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(ev.lugar)},9,0,12,0);this.download='junta.ics'">Apple / Outlook</a>
+        </div>`;
+    }
+
+    row.appendChild(stack);
+    eventsWrap.appendChild(row);
+  });
+
+  block.appendChild(eventsWrap);
+  cal.appendChild(block);
+});
+
+// ── MOUSE TRACKING SHIMMER ──
+document.querySelectorAll && document.addEventListener('mousemove', (e) => {
+  document.querySelectorAll('.month-block').forEach(block => {
+    const rect = block.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1);
+    block.style.setProperty('--mx', x + '%');
+    block.style.setProperty('--my', y + '%');
+  });
+});
+
+// ── SCROLL INTERSECTION — reveal + active center ──
+const allBlocks = () => document.querySelectorAll('.month-block');
+
+// Reveal on enter viewport
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      entry.target.style.animationDelay = (i * 60) + 'ms';
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+allBlocks().forEach(b => revealObserver.observe(b));
+
+// Active glow on center of screen
+const activeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('scroll-active');
+    } else {
+      entry.target.classList.remove('scroll-active');
+    }
+  });
+}, {
+  threshold: 0,
+  rootMargin: '-35% 0px -35% 0px'
+});
+
+allBlocks().forEach(b => activeObserver.observe(b));
+
+// ── TILT ON HOVER (desktop) ──
+allBlocks().forEach(block => {
+  block.addEventListener('mousemove', (e) => {
+    const rect = block.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top  + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width  / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    const tiltX = +(dy * 2.5).toFixed(2);
+    const tiltY = -(dx * 2.5).toFixed(2);
+    block.style.transform = `translateY(-3px) perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+  });
+  block.addEventListener('mouseleave', () => {
+    block.style.transform = '';
+  });
+});
+
+// Footer
+const footerPills = [
+  { text: 'thelifechurch.cl', style: 'background:transparent;border:2px solid #222;color:#444' },
+  { text: 'creativos@thelifechurch.cl', style: 'background:transparent;border:2px solid #222;color:#444' },
+  { text: 'Equipo Creativo 2026', style: 'background:#f5a623;color:#0a0a0a;font-weight:800' },
+];
+const fp = document.getElementById('footer-pills');
+footerPills.forEach(p => {
+  const s = document.createElement('span');
+  s.className = 'leg-pill';
+  s.style.cssText = p.style;
+  s.textContent = p.text;
+  fp.appendChild(s);
+});
+</script>
+</body>
+</html>
