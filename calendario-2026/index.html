@@ -378,6 +378,18 @@
     white-space: nowrap;
   }
 
+  /* la píldora de Meet es un enlace: se ve igual, pero responde al hover */
+  a.p-outline {
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  a.p-outline:hover {
+    border-color: #2ecc71;
+    color: #2ecc71;
+  }
+
   .p-time {
     border-radius: 999px;
     padding: 0.35rem 0.9rem;
@@ -514,6 +526,8 @@
 // Orden fijo de los devocionales. NO sortear: con Math.random() cada persona
 // que abría el calendario veía una asignación distinta, y cambiaba al recargar.
 // Para reasignar a alguien, edita esta lista — el orden es el de las fechas.
+const MEET_URL = 'https://meet.google.com/mom-xfin-bmq';
+
 // Daniel y David son los líderes: llevan las informaciones, no los devocionales.
 const devOrder = [
   'Jazmín',   // 10 jun
@@ -629,7 +643,7 @@ months.forEach(m => {
         stack.innerHTML = `
           <span class="p-type dev">devocional & oración</span>
           <span class="p-name">${who}</span>
-          <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
+          <a class="p-outline" href="${MEET_URL}" target="_blank" rel="noopener">Meet · creativos@thelifechurch.cl</a>
           <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
@@ -643,7 +657,7 @@ months.forEach(m => {
         stack.innerHTML = `
           <span class="p-type info">informaciones</span>
           <span class="p-name">Daniel & David</span>
-          <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
+          <a class="p-outline" href="${MEET_URL}" target="_blank" rel="noopener">Meet · creativos@thelifechurch.cl</a>
           <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
