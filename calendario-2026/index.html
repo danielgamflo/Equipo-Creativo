@@ -511,17 +511,18 @@
 <footer id="footer-pills"></footer>
 
 <script>
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-const volunteers = shuffle(['Kathy','Jazmín','Sorimar','Renata','Carol','Ronald']);
-const devOrder = [...volunteers, 'Daniel', 'David'];
+// Orden fijo de los devocionales. NO sortear: con Math.random() cada persona
+// que abría el calendario veía una asignación distinta, y cambiaba al recargar.
+// Para reasignar a alguien, edita esta lista — el orden es el de las fechas.
+const devOrder = [
+  'Jazmín',   // 10 jun
+  'Renata',   //  8 jul
+  'Carol',    //  5 ago
+  'Ronald',   //  2 sep
+  'Sorimar',  // 30 sep
+  'Kathy',    // 28 oct
+  'Daniel',   // 25 nov
+];
 
 const wedEvents = [];
 let d = new Date(2026, 5, 10);
