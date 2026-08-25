@@ -643,13 +643,17 @@ months.forEach(m => {
     const stack = document.createElement('div');
     stack.className = 'pill-stack';
     const uid = 'c' + ev.date.getTime();
+    let ics;   // datos del evento para Google Calendar y el .ics
 
     if (ev.kind === 'wed') {
       if (ev.tipo === 'dev') {
         const who = devOrder[ev.devIdx % devOrder.length];
-        const title = `Devocional Equipo Creativo – ${who}`;
-        const desc = `Devocional & Oración\nResponsable: ${who}\nUnirse por Google Meet: ${MEET_URL}`;
-        const gcl = gcLink(title, ev.date, desc, MEET_URL);
+        ics = {
+          title: `Devocional Equipo Creativo – ${who}`,
+          desc:  `Devocional & Oración\nResponsable: ${who}\nUnirse por Google Meet: ${MEET_URL}`,
+          loc:   MEET_URL,
+          file:  'devocional.ics',
+        };
         stack.innerHTML = `
           <span class="p-type dev">devocional & oración</span>
           <span class="p-name">${who}</span>
@@ -657,13 +661,16 @@ months.forEach(m => {
           <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
-            <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
-            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(MEET_URL)});this.download='devocional.ics'">Apple / Outlook</a>
+            <a class="cal-opt-link gcal" href="${gcLink(ics.title, ev.date, ics.desc, ics.loc)}" target="_blank">Google Calendar</a>
+            <a class="cal-opt-link ical" href="#">Apple / Outlook</a>
           </div>`;
       } else {
-        const title = 'Informaciones Equipo Creativo';
-        const desc = `Reunión de Informaciones\nResponsables: Daniel & David\nUnirse por Google Meet: ${MEET_URL}`;
-        const gcl = gcLink(title, ev.date, desc, MEET_URL);
+        ics = {
+          title: 'Informaciones Equipo Creativo',
+          desc:  `Reunión de Informaciones\nResponsables: Daniel & David\nUnirse por Google Meet: ${MEET_URL}`,
+          loc:   MEET_URL,
+          file:  'informaciones.ics',
+        };
         stack.innerHTML = `
           <span class="p-type info">informaciones</span>
           <span class="p-name">Daniel & David</span>
@@ -671,14 +678,18 @@ months.forEach(m => {
           <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
-            <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
-            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(MEET_URL)});this.download='informaciones.ics'">Apple / Outlook</a>
+            <a class="cal-opt-link gcal" href="${gcLink(ics.title, ev.date, ics.desc, ics.loc)}" target="_blank">Google Calendar</a>
+            <a class="cal-opt-link ical" href="#">Apple / Outlook</a>
           </div>`;
       }
     } else {
-      const title = `Junta de Equipo – ${ev.tema}`;
-      const desc = `${ev.tema}\n${ev.detalle}\nLugar: ${ev.lugar}`;
-      const gcl = gcLink(title, ev.date, desc, ev.lugar, 9, 0, 12, 0);
+      ics = {
+        title: `Junta de Equipo – ${ev.tema}`,
+        desc:  `${ev.tema}\n${ev.detalle}\nLugar: ${ev.lugar}`,
+        loc:   ev.lugar,
+        file:  'junta.ics',
+        horas: [9, 0, 12, 0],
+      };
       stack.innerHTML = `
         <span class="p-type junta">junta de equipo</span>
         <span class="p-name">${ev.tema}</span>
@@ -686,10 +697,19 @@ months.forEach(m => {
         <span class="p-outline">${ev.lugar}</span>
         <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
         <div class="cal-options" id="${uid}">
-          <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
-          <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(ev.lugar)},9,0,12,0);this.download='junta.ics'">Apple / Outlook</a>
+          <a class="cal-opt-link gcal" href="${gcLink(ics.title, ev.date, ics.desc, ics.loc, 9, 0, 12, 0)}" target="_blank">Google Calendar</a>
+          <a class="cal-opt-link ical" href="#">Apple / Outlook</a>
         </div>`;
     }
+
+    // El .ics se arma con un listener, no con onclick inline: JSON.stringify
+    // devuelve el texto entre comillas dobles y cerraba el atributo onclick="…"
+    // al primer título, dejando el botón sin handler (nunca descargó nada).
+    const icalLink = stack.querySelector('a.cal-opt-link.ical');
+    icalLink.download = ics.file;
+    icalLink.addEventListener('click', () => {
+      icalLink.href = icsBlob(ics.title, ev.date, ics.desc, ics.loc, ...(ics.horas || []));
+    });
 
     row.appendChild(stack);
     eventsWrap.appendChild(row);
