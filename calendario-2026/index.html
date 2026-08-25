@@ -205,7 +205,7 @@
       background 0.4s ease,
       border-color 0.4s ease,
       box-shadow 0.4s ease,
-      transform 0.4s ease;
+      transform 0.2s ease;
     position: relative;
     cursor: default;
     will-change: transform;
@@ -244,6 +244,10 @@
   .month-block.in-view {
     animation: blockReveal 0.6s cubic-bezier(0.22,1,0.36,1) both;
   }
+
+  /* al terminar el reveal se quita .in-view: una animación con fill:both
+     sigue pisando el transform inline del tilt y del :hover */
+  .month-block.revealed { opacity: 1; }
 
   @keyframes blockReveal {
     from { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(4px); }
@@ -669,17 +673,6 @@ months.forEach(m => {
   cal.appendChild(block);
 });
 
-// ── MOUSE TRACKING SHIMMER ──
-document.querySelectorAll && document.addEventListener('mousemove', (e) => {
-  document.querySelectorAll('.month-block').forEach(block => {
-    const rect = block.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-    const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1);
-    block.style.setProperty('--mx', x + '%');
-    block.style.setProperty('--my', y + '%');
-  });
-});
-
 // ── SCROLL INTERSECTION — reveal + active center ──
 const allBlocks = () => document.querySelectorAll('.month-block');
 
@@ -712,19 +705,43 @@ const activeObserver = new IntersectionObserver((entries) => {
 
 allBlocks().forEach(b => activeObserver.observe(b));
 
-// ── TILT ON HOVER (desktop) ──
+// Una vez terminado el reveal se retira .in-view. Si se deja puesta, su
+// fill:both mantiene el transform final de la animación, que en la cascada
+// gana sobre el style inline y anula el tilt y el translateY del :hover.
 allBlocks().forEach(block => {
-  block.addEventListener('mousemove', (e) => {
-    const rect = block.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top  + rect.height / 2;
-    const dx = (e.clientX - cx) / (rect.width  / 2);
-    const dy = (e.clientY - cy) / (rect.height / 2);
-    const tiltX = +(dy * 2.5).toFixed(2);
-    const tiltY = -(dx * 2.5).toFixed(2);
-    block.style.transform = `translateY(-3px) perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+  block.addEventListener('animationend', (e) => {
+    if (e.animationName !== 'blockReveal') return;   // fadeUp de las filas burbujea hasta acá
+    block.classList.remove('in-view');
+    block.classList.add('revealed');
   });
+});
+
+// ── SHIMMER + TILT ON HOVER (desktop) ──
+// Ambos van en el mismo handler, y solo para el bloque bajo el cursor:
+// medir los 6 bloques en cada mousemove forzaba un reflow por bloque.
+allBlocks().forEach(block => {
+  let raf = null, last = null;
+
+  block.addEventListener('mousemove', (e) => {
+    last = e;
+    if (raf) return;                                  // un cálculo por frame, no por evento
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      const rect = block.getBoundingClientRect();
+      const px = (last.clientX - rect.left) / rect.width;
+      const py = (last.clientY - rect.top)  / rect.height;
+
+      block.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      block.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+
+      const tiltX = +((py - 0.5) * 5).toFixed(2);
+      const tiltY = -((px - 0.5) * 5).toFixed(2);
+      block.style.transform = `translateY(-3px) perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    });
+  });
+
   block.addEventListener('mouseleave', () => {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
     block.style.transform = '';
   });
 });
