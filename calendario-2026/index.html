@@ -569,15 +569,25 @@ function gcLink(title,date,desc,loc,sh=21,sm=0,eh=22,em=0){
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${fmtDT(date,sh,sm)}/${fmtDT(date,eh,em)}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
 }
 
+// En un valor TEXT de iCalendar hay que escapar \ , ; y los saltos de línea.
+function icsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n'); }
+
 function icsBlob(title,date,desc,loc,sh=21,sm=0,eh=22,em=0){
-  const ics=[
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TLC Creative//ES',
+  const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+  const lines = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TLC Creative//ES','CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
+    // UID y DTSTAMP son obligatorios en RFC 5545: sin ellos Outlook puede
+    // rechazar el .ics o duplicar el evento al reimportarlo.
+    `UID:${fmtDT(date,sh,sm)}-equipocreativo@thelifechurch.cl`,
+    `DTSTAMP:${stamp}`,
     `DTSTART:${fmtDT(date,sh,sm)}`,`DTEND:${fmtDT(date,eh,em)}`,
-    `SUMMARY:${title}`,`DESCRIPTION:${desc.replace(/\n/g,'\\n')}`,
-    `LOCATION:${loc}`,'END:VEVENT','END:VCALENDAR'
-  ].join('\r\n');
-  return URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));
+    `SUMMARY:${icsEsc(title)}`,`DESCRIPTION:${icsEsc(desc)}`,
+    `LOCATION:${icsEsc(loc)}`,
+  ];
+  if (/^https?:/.test(loc)) lines.push(`URL:${loc}`);
+  lines.push('END:VEVENT','END:VCALENDAR');
+  return URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'}));
 }
 
 function toggleCal(id){ document.getElementById(id).classList.toggle('open'); }
@@ -638,8 +648,8 @@ months.forEach(m => {
       if (ev.tipo === 'dev') {
         const who = devOrder[ev.devIdx % devOrder.length];
         const title = `Devocional Equipo Creativo – ${who}`;
-        const desc = `Devocional & Oración\nResponsable: ${who}\nCompartir enlace desde creativos@thelifechurch.cl`;
-        const gcl = gcLink(title, ev.date, desc, 'Google Meet');
+        const desc = `Devocional & Oración\nResponsable: ${who}\nUnirse por Google Meet: ${MEET_URL}`;
+        const gcl = gcLink(title, ev.date, desc, MEET_URL);
         stack.innerHTML = `
           <span class="p-type dev">devocional & oración</span>
           <span class="p-name">${who}</span>
@@ -648,12 +658,12 @@ months.forEach(m => {
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
             <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
-            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},'Google Meet');this.download='devocional.ics'">Apple / Outlook</a>
+            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(MEET_URL)});this.download='devocional.ics'">Apple / Outlook</a>
           </div>`;
       } else {
         const title = 'Informaciones Equipo Creativo';
-        const desc = 'Reunión de Informaciones\nResponsables: Daniel & David\nCompartir enlace desde creativos@thelifechurch.cl';
-        const gcl = gcLink(title, ev.date, desc, 'Google Meet');
+        const desc = `Reunión de Informaciones\nResponsables: Daniel & David\nUnirse por Google Meet: ${MEET_URL}`;
+        const gcl = gcLink(title, ev.date, desc, MEET_URL);
         stack.innerHTML = `
           <span class="p-type info">informaciones</span>
           <span class="p-name">Daniel & David</span>
@@ -662,7 +672,7 @@ months.forEach(m => {
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
             <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
-            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},'Google Meet');this.download='informaciones.ics'">Apple / Outlook</a>
+            <a class="cal-opt-link ical" href="#" onclick="this.href=icsBlob(${JSON.stringify(title)},new Date(${ev.date.getTime()}),${JSON.stringify(desc)},${JSON.stringify(MEET_URL)});this.download='informaciones.ics'">Apple / Outlook</a>
           </div>`;
       }
     } else {
