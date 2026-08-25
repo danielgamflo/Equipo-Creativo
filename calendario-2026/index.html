@@ -492,7 +492,7 @@
   </div>
   <div class="header-meet">
     <span class="meet-pill">● Google Meet</span>
-    <span class="meet-desc">9:30 – 10:30 · Enlace vía creativos@thelifechurch.cl</span>
+    <span class="meet-desc">9:00 PM – 10:00 PM · Enlace vía creativos@thelifechurch.cl</span>
   </div>
 </div>
 
@@ -516,7 +516,7 @@ function shuffle(arr) {
   return a;
 }
 
-const volunteers = shuffle(['Kathy','Jasmine','Sorimar','Renata','Carol','Ronald']);
+const volunteers = shuffle(['Kathy','Jazmín','Sorimar','Renata','Carol','Ronald']);
 const devOrder = [...volunteers, 'Daniel', 'David'];
 
 const wedEvents = [];
@@ -545,11 +545,11 @@ const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto
 function pad(n){ return String(n).padStart(2,'0'); }
 function fmtDT(date,h,m){ return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(h)}${pad(m)}00`; }
 
-function gcLink(title,date,desc,loc,sh=9,sm=30,eh=10,em=30){
+function gcLink(title,date,desc,loc,sh=21,sm=0,eh=22,em=0){
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${fmtDT(date,sh,sm)}/${fmtDT(date,eh,em)}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
 }
 
-function icsBlob(title,date,desc,loc,sh=9,sm=30,eh=10,em=30){
+function icsBlob(title,date,desc,loc,sh=21,sm=0,eh=22,em=0){
   const ics=[
     'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//TLC Creative//ES',
     'BEGIN:VEVENT',
@@ -624,7 +624,7 @@ months.forEach(m => {
           <span class="p-type dev">devocional & oración</span>
           <span class="p-name">${who}</span>
           <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
-          <span class="p-time">9:30 – 10:30</span>
+          <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
             <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
@@ -638,7 +638,7 @@ months.forEach(m => {
           <span class="p-type info">informaciones</span>
           <span class="p-name">Daniel & David</span>
           <span class="p-outline">Meet · creativos@thelifechurch.cl</span>
-          <span class="p-time">9:30 – 10:30</span>
+          <span class="p-time">9:00 PM – 10:00 PM</span>
           <button class="cal-toggle" onclick="toggleCal('${uid}')">＋ guardar</button>
           <div class="cal-options" id="${uid}">
             <a class="cal-opt-link gcal" href="${gcl}" target="_blank">Google Calendar</a>
