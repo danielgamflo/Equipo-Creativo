@@ -647,7 +647,8 @@ months.forEach(m => {
 
     if (ev.kind === 'wed') {
       if (ev.tipo === 'dev') {
-        const who = devOrder[ev.devIdx % devOrder.length];
+        let who = devOrder[ev.devIdx % devOrder.length];
+        if (ev.date.getDate() === 31 && ev.date.getMonth() === 7) who = 'Karol';  // 31 ago: Karol
         ics = {
           title: `Devocional Equipo Creativo – ${who}`,
           desc:  `Devocional & Oración\nResponsable: ${who}\nUnirse por Google Meet: ${MEET_URL}`,
